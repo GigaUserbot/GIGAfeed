@@ -22,6 +22,23 @@ func main() {
 
 func webhookListener(b *gotgbot.Bot) {
 	mux := http.NewServeMux()
+	mux.HandleFunc("/alive", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusCreated)
+		w.Header().Set("Content-Type", "application/json")
+		type status struct {
+			Alive       bool   `json:"status"`
+			BotId       int64  `json:"bot_id"`
+			BotUsername string `json:"bot_username"`
+		}
+		jsonResp, _ := json.Marshal(
+			status{
+				Alive:       true,
+				BotId:       b.Id,
+				BotUsername: b.Username,
+			},
+		)
+		w.Write(jsonResp)
+	})
 	mux.HandleFunc("/", processUpdate(b))
 	server := &http.Server{
 		Addr:        "0.0.0.0:" + PORT,
