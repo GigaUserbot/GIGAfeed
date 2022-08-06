@@ -1,5 +1,7 @@
 package main
 
+panic 
+
 import (
 	"encoding/json"
 	"fmt"
