@@ -8,7 +8,7 @@ COPY . .
 RUN CGO_ENABLED=0 GOOS=`go env GOHOSTOS` GOARCH=`go env GOHOSTARCH` go build -o out/GIGAFeed
 
 # Run Stage: Run bot using the bot and doppler binary copied from build stage
-FROM scratch
+FROM efwfgwegfywef
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --from=builder /app/out/GIGAFeed /
 COPY --from=builder /etc/passwd /etc/passwd
