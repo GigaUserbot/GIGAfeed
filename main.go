@@ -10,8 +10,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 )
 
-// const GIGA_FEED_CHAT_ID = -1001799797732
-const GIGA_FEED_CHAT_ID = 1844750229
+const GIGA_FEED_CHAT_ID = -1001799797732
 
 func main() {
 	b, err := gotgbot.NewBot(BOT_TOKEN, &gotgbot.BotOpts{})
