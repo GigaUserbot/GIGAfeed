@@ -24,7 +24,7 @@ func webhookListener(b *gotgbot.Bot) {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", processUpdate(b))
 	server := &http.Server{
-		Addr:        "0.0.0.0:3455",
+		Addr:        "0.0.0.0:" + PORT,
 		Handler:     mux,
 		ReadTimeout: time.Second * 2,
 	}
