@@ -10,6 +10,8 @@ type Event struct {
 	Action string `json:"action,omitempty"`
 	// The commit comment resource.
 	Comment Comment `json:"comment,omitempty"`
+	// Commits
+	Commits []Commit `json:"commits,omitempty"`
 	// The discussion resource.
 	Discussion Discussion `json:"discussion,omitempty"`
 	// The issue the comment belongs to.
@@ -22,6 +24,11 @@ type Event struct {
 	// For a newly created ref that is directly based on the default branch, this is the comparison between the head of the default branch and the after commit.
 	// Otherwise, this shows all commits until the after commit.
 	Compare string `json:"compare,omitempty"`
+}
+
+type Commit struct {
+	Message string `json:"message"`
+	Url     string `json:"url"`
 }
 
 type Pusher struct {

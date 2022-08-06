@@ -74,8 +74,7 @@ const PUSH_TEMPL = `
 <b>Ref</b>: <code>%s</code>
 <b>Changes</b>: <a href="%s">click here</a>
 <b>Pusher's Name</b>: %s
-<b>Pusher's Email</b>: %s
-`
+<b>Pusher's Email</b>: %s`
 
 const ISSUE_TEMPL = `
 <b><u><a href="github.com/gigauserbot">THE GIGA PROJECT</a></u></b>
@@ -133,16 +132,47 @@ func handleUpdate(b *gotgbot.Bot, event *Event) {
 		return
 	}
 	switch {
-	case event.Ref != "":
+	case event.Comment.Url != "":
+		var ctype string
+		if event.Issue.Number != 0 {
+			ctype = "Issue Comment"
+		} else if event.Discussion.Number != 0 {
+			ctype = "Discussion Comment"
+		} else {
+			ctype = "Commit Comment"
+		}
 		send(b,
 			fmt.Sprintf(
-				PUSH_TEMPL,
+				COMNT_TEMPL,
 				event.Repository.Name,
-				event.Ref,
-				event.Compare,
-				event.Pusher.Name,
-				event.Pusher.Email,
+				ctype,
+				event.Comment.Url,
+				event.Action,
+				event.Sender.Name,
 			),
+			&gotgbot.InlineKeyboardMarkup{
+				InlineKeyboard: [][]gotgbot.InlineKeyboardButton{
+					{{Text: "Repository", Url: event.Repository.Url}},
+				},
+			},
+		)
+	case event.Ref != "":
+		text := fmt.Sprintf(
+			PUSH_TEMPL,
+			event.Repository.Name,
+			event.Ref,
+			event.Compare,
+			event.Pusher.Name,
+			event.Pusher.Email,
+		)
+		if len(event.Commits) > 0 {
+			text += "\n<b>Commits<b>:"
+			for _, c := range event.Commits {
+				text += fmt.Sprintf(`\n  • <a href="%s">%s<a>`, c.Url, c.Message)
+			}
+		}
+		send(b,
+			text,
 			&gotgbot.InlineKeyboardMarkup{
 				InlineKeyboard: [][]gotgbot.InlineKeyboardButton{
 					{{Text: "Repository", Url: event.Repository.Url}},
@@ -157,7 +187,7 @@ func handleUpdate(b *gotgbot.Bot, event *Event) {
 				event.Action,
 				event.Issue.Url,
 				event.Issue.Title,
-				event.Issue.User.Name,
+				event.Sender.Name,
 			),
 			&gotgbot.InlineKeyboardMarkup{
 				InlineKeyboard: [][]gotgbot.InlineKeyboardButton{
@@ -189,30 +219,6 @@ func handleUpdate(b *gotgbot.Bot, event *Event) {
 				event.Action,
 				event.Discussion.Url,
 				event.Discussion.Title,
-				event.Discussion.User.Name,
-			),
-			&gotgbot.InlineKeyboardMarkup{
-				InlineKeyboard: [][]gotgbot.InlineKeyboardButton{
-					{{Text: "Repository", Url: event.Repository.Url}},
-				},
-			},
-		)
-	case event.Comment.Url != "":
-		var ctype string
-		if event.Issue.Number != 0 {
-			ctype = "Issue Comment"
-		} else if event.Discussion.Number != 0 {
-			ctype = "Discussion Comment"
-		} else {
-			ctype = "Commit Comment"
-		}
-		send(b,
-			fmt.Sprintf(
-				DISC_TEMPL,
-				event.Repository.Name,
-				ctype,
-				event.Comment.Url,
-				event.Action,
 				event.Sender.Name,
 			),
 			&gotgbot.InlineKeyboardMarkup{
