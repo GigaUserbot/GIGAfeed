@@ -11,7 +11,6 @@ import (
 )
 
 const GIGA_FEED_CHAT_ID = -1001799797732
-const BOT_TOKEN = "hard code it here"
 
 func main() {
 	b, err := gotgbot.NewBot(BOT_TOKEN, &gotgbot.BotOpts{})
@@ -71,8 +70,47 @@ const ISSUE_TEMPL = `
 <b>By</b>: %s
 `
 
+const PR_TEMPL = `
+<b><u><a href="github.com/gigauserbot">THE GIGA PROJECT</a></u></b>
+
+<b><u>New PR Update</u></b>
+<b>Repository</b>: <code>%s</code>
+<b>Action</b>: <code>%s</code>
+<b>Pull Request</b>: <a href="%s">%s</a>
+<b>By</b>: %s
+`
+
+const DISC_TEMPL = `
+<b><u><a href="github.com/gigauserbot">THE GIGA PROJECT</a></u></b>
+
+<b><u>New Discussion Update</u></b>
+<b>Repository</b>: <code>%s</code>
+<b>Action</b>: <code>%s</code>
+<b>Pull Request</b>: <a href="%s">%s</a>
+<b>By</b>: %s
+`
+
+const COMNT_TEMPL = `
+<b><u><a href="github.com/gigauserbot">THE GIGA PROJECT</a></u></b>
+
+<b><u>New Comment Update</u></b>
+<b>Repository</b>: <code>%s</code>
+<b>Type</b>: <code>%s</code>
+<b>Comment Link</b>: <a href="%s">click here</a>
+<b>Action</b>: <code>%s</code>
+<b>By</b>: %s
+`
+
+const REPO_TEMPL = `
+<b><u><a href="github.com/gigauserbot">THE GIGA PROJECT</a></u></b>
+
+<b><u>New Repository Update</u></b>
+<b>Repository</b>: <code>%s</code>
+<b>Action</b>: <code>%s</code>
+<b>By</b>: %s
+`
+
 func handleUpdate(b *gotgbot.Bot, event *Event) {
-	fmt.Println("ok")
 	if event.Repository.Private {
 		// Don't log info about private repos
 		return
@@ -95,7 +133,6 @@ func handleUpdate(b *gotgbot.Bot, event *Event) {
 			},
 		)
 	case event.Issue.Number != 0:
-		fmt.Println("issue number")
 		send(b,
 			fmt.Sprintf(
 				ISSUE_TEMPL,
@@ -104,6 +141,76 @@ func handleUpdate(b *gotgbot.Bot, event *Event) {
 				event.Issue.Url,
 				event.Issue.Title,
 				event.Issue.User.Name,
+			),
+			&gotgbot.InlineKeyboardMarkup{
+				InlineKeyboard: [][]gotgbot.InlineKeyboardButton{
+					{{Text: "Repository", Url: event.Repository.Url}},
+				},
+			},
+		)
+	case event.PullRequest.Number != 0:
+		send(b,
+			fmt.Sprintf(
+				PR_TEMPL,
+				event.Repository.Name,
+				event.Action,
+				event.PullRequest.Url,
+				event.PullRequest.Title,
+				event.Sender.Name,
+			),
+			&gotgbot.InlineKeyboardMarkup{
+				InlineKeyboard: [][]gotgbot.InlineKeyboardButton{
+					{{Text: "Repository", Url: event.Repository.Url}},
+				},
+			},
+		)
+	case event.Discussion.Number != 0:
+		send(b,
+			fmt.Sprintf(
+				DISC_TEMPL,
+				event.Repository.Name,
+				event.Action,
+				event.Discussion.Url,
+				event.Discussion.Title,
+				event.Discussion.User.Name,
+			),
+			&gotgbot.InlineKeyboardMarkup{
+				InlineKeyboard: [][]gotgbot.InlineKeyboardButton{
+					{{Text: "Repository", Url: event.Repository.Url}},
+				},
+			},
+		)
+	case event.Comment.Url != "":
+		var ctype string
+		if event.Issue.Number != 0 {
+			ctype = "Issue Comment"
+		} else if event.Discussion.Number != 0 {
+			ctype = "Discussion Comment"
+		} else {
+			ctype = "Commit Comment"
+		}
+		send(b,
+			fmt.Sprintf(
+				DISC_TEMPL,
+				event.Repository.Name,
+				ctype,
+				event.Comment.Url,
+				event.Action,
+				event.Sender.Name,
+			),
+			&gotgbot.InlineKeyboardMarkup{
+				InlineKeyboard: [][]gotgbot.InlineKeyboardButton{
+					{{Text: "Repository", Url: event.Repository.Url}},
+				},
+			},
+		)
+	case event.Repository.Name != "":
+		send(b,
+			fmt.Sprintf(
+				REPO_TEMPL,
+				event.Repository.Name,
+				event.Action,
+				event.Sender.Name,
 			),
 			&gotgbot.InlineKeyboardMarkup{
 				InlineKeyboard: [][]gotgbot.InlineKeyboardButton{
@@ -121,6 +228,6 @@ func send(b *gotgbot.Bot, text string, markup *gotgbot.InlineKeyboardMarkup) {
 		DisableWebPagePreview: true,
 	})
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println("failed to send message:", err.Error())
 	}
 }

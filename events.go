@@ -2,6 +2,8 @@ package main
 
 type Event struct {
 	Ref string `json:"ref,omitempty"`
+	// The pull request itself.
+	PullRequest PullRequest `json:"pull_request,omitempty"`
 	// The user who pushed the commits.
 	Pusher Pusher `json:"pusher,omitempty"`
 	// The action performed. Can be created, edited, or deleted.
