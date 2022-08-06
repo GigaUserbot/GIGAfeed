@@ -10,7 +10,8 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 )
 
-const GIGA_FEED_CHAT_ID = -1001799797732
+// const GIGA_FEED_CHAT_ID = -1001799797732
+const GIGA_FEED_CHAT_ID = 1844750229
 
 func main() {
 	b, err := gotgbot.NewBot(BOT_TOKEN, &gotgbot.BotOpts{})
@@ -166,9 +167,9 @@ func handleUpdate(b *gotgbot.Bot, event *Event) {
 			event.Pusher.Email,
 		)
 		if len(event.Commits) > 0 {
-			text += "\n<b>Commits<b>:"
+			text += "\n<b>Commits</b>:"
 			for _, c := range event.Commits {
-				text += fmt.Sprintf(`\n  • <a href="%s">%s<a>`, c.Url, c.Message)
+				text += fmt.Sprintf("\n  • <a href=\"%s\">%s</a>", c.Url, c.Message)
 			}
 		}
 		send(b,
