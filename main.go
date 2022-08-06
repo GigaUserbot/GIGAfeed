@@ -26,7 +26,7 @@ func webhookListener(b *gotgbot.Bot) {
 		w.WriteHeader(http.StatusCreated)
 		w.Header().Set("Content-Type", "application/json")
 		type status struct {
-			Alive       bool   `json:"status"`
+			Alive       bool   `json:"alive"`
 			BotId       int64  `json:"bot_id"`
 			BotUsername string `json:"bot_username"`
 		}
