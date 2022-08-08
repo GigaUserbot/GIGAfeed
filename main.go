@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
@@ -168,7 +169,7 @@ func handleUpdate(b *gotgbot.Bot, event *Event) {
 		if len(event.Commits) > 0 {
 			text += "\n<b>Commits</b>:"
 			for _, c := range event.Commits {
-				text += fmt.Sprintf("\n  • <a href=\"%s\">%s</a>", c.Url, c.Message)
+				text += fmt.Sprintf("\n  • <a href=\"%s\">%s</a>", c.Url, strings.Split(c.Message, "\n\n")[0])
 			}
 		}
 		send(b,
