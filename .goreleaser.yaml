@@ -46,8 +46,6 @@ dockers:
       - "--label=org.opencontainers.image.title={{ .ProjectName }}"
       - "--label=org.opencontainers.image.revision={{.FullCommit}}"
       - "--label=org.opencontainers.image.version={{.Version}}"
-    extra_files:
-      - changelog.json
   # arm64 only
   - goarch: arm64
     dockerfile: goreleaser.Dockerfile
@@ -62,8 +60,6 @@ dockers:
       - "--label=org.opencontainers.image.title={{ .ProjectName }}"
       - "--label=org.opencontainers.image.revision={{.FullCommit}}"
       - "--label=org.opencontainers.image.version={{.Version}}"
-    extra_files:
-      - changelog.json
 
 docker_manifests:
   # docker hub
